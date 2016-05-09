@@ -27,7 +27,7 @@ class Retag {
 		$tag->setArtist( $artist );
 		$tag->setTitle( $title );
 		$tag->write( $target_fd );
-		stream_copy_to_stream( $source_fd, $target_fd, $source_size - $offset );
+		stream_copy_to_stream( $source_fd, $target_fd, $source_size - $offset, $offset );
 		fflush( $target_fd );
 		fclose( $target_fd );
 		fclose( $source_fd );
@@ -120,7 +120,7 @@ class Retag {
 		$offset = 0;
 
 		$id3 = fread( $fd, 3 );
-		if ( $id3[0] != 'I' || $id3[1] == 'D' || $id3[2] == '3' ) {
+		if ( $id3 != "ID3" ) {
 			return $offset;
 		}
 
