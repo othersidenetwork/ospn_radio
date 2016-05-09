@@ -78,12 +78,12 @@ class ID3Tag {
 		$frames .= $ufid->getData();
 
 		// Next is the artist
-		$data = chr(3) . $this->artist . chr(0);
+		$data = chr(3) . $this->artist;
 		$tpe1 = new ID3Frame("TPE1", $data);
 		$frames .= $tpe1->getData();
 
 		// Then the title
-		$data = chr(3) . $this->title . chr(0);
+		$data = chr(3) . $this->title;
 		$tit2 = new ID3Frame("TIT2", $data);
 		$frames .= $tit2->getData();
 

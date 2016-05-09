@@ -9,7 +9,13 @@ class Retag {
 			return ( "Source file {$source} does not exist." );
 		}
 
-		$source_fd = fopen( $source, "rb" );
+		$source_size = filesize( $source );
+		$source_fd   = fopen( $source, "rb" );
+		fseek( $source_fd, -128, SEEK_END );
+		$tag = fread( $source_fd, 3 );
+		if ($tag == 'TAG') {
+			$source_size -= 128;
+		}
 		fseek( $source_fd, 0, SEEK_SET );
 		$offset = $this->getOffset( $source_fd );
 		fseek( $source_fd, $offset, SEEK_SET );
@@ -21,7 +27,7 @@ class Retag {
 		$tag->setArtist( $artist );
 		$tag->setTitle( $title );
 		$tag->write( $target_fd );
-		stream_copy_to_stream( $source_fd, $target_fd );
+		stream_copy_to_stream( $source_fd, $target_fd, $source_size - $offset );
 		fflush( $target_fd );
 		fclose( $target_fd );
 		fclose( $source_fd );
@@ -114,7 +120,7 @@ class Retag {
 		$offset = 0;
 
 		$id3 = fread( $fd, 3 );
-		if ( ord( $id3[0] ) == 0xFF && ord( $id3[1] ) == 0xFB ) {
+		if ( $id3[0] != 'I' || $id3[1] == 'D' || $id3[2] == '3' ) {
 			return $offset;
 		}
 

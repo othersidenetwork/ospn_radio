@@ -2,3 +2,4 @@
 vendor/
 php.iml
 composer.lock
+OSPN/Config.php

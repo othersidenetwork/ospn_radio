@@ -3,19 +3,13 @@
 require( 'vendor/autoload.php' );
 
 use OSPN\Retag;
+use OSPN\Config;
 
 $retag = new Retag();
 
-$database = new medoo( [
-	'database_type' => 'mysql',
-	'database_name' => 'ospn_radio',
-	'server'        => 'localhost',
-	'username'      => 'ospn_radio',
-	'password'      => 'ospn_radio',
-	'charset'       => 'utf8'
-] );
+$database = Config::getDatabaseConnection();
 
-$datas = $database->select( 'cchits', [ '*' ], [ 'ORDER' => [ 'id DESC' ] ] );
+$datas = $database->select( 'cchits', [ 'id', 'ufid', 'artist_name', 'track_name' ], [ 'ORDER' => [ 'id DESC' ] ] );
 
 $retag = new Retag();
 
@@ -27,6 +21,8 @@ foreach ( $datas as $data ) {
 	}
 	$target = '/home/yannick/radio/music/' . $ufid . '.mp3';
 	echo "Re-tagging {$source} to {$target}\n";
+	/*
 	$retag->retag( $source, $target, $ufid, $data['artist_name'], $data['track_name'] );
 	$database->update( 'cchits', [ 'ufid' => $ufid ], [ 'id' => $data['id'] ] );
+	*/
 }
