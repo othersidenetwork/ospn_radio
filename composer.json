@@ -1,0 +1,17 @@
+{
+    "name": "ospn/radio",
+    "authors": [
+        {
+            "name": "Yannick Mauray",
+            "email": "yannick.mauray@gmail.com"
+        }
+    ],
+    "require": {
+        "catfan/Medoo": "^1.0"
+    },
+    "autoload": {
+        "psr-4": {
+            "OSPN\\": "OSPN/"
+        }
+    }
+}
