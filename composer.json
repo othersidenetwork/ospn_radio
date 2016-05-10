@@ -8,7 +8,8 @@
     ],
     "require": {
         "catfan/Medoo": "^1.0",
-        "mtdowling/cron-expression": "^1.1"
+        "mtdowling/cron-expression": "^1.1",
+        "fguillot/picofeed": "@stable"
     },
     "autoload": {
         "psr-4": {
