@@ -18,16 +18,20 @@ foreach($crons as $cron) {
 }
 
 // Look for scheduled jobs
-$crons = $database->query('SELECT * FROM crontab WHERE next - UNIX_TIMESTAMP() <= 10 ORDER BY next ASC')->fetchAll();
+$crons = $database->query('SELECT crontab.*, crontab.next - UNIX_TIMESTAMP() as delta FROM crontab WHERE next - UNIX_TIMESTAMP() <= 10 ORDER BY next ASC')->fetchAll();
 foreach ($crons as $cron) {
+	$now = new DateTime();
 	$then = new DateTime();
+	error_log($now->format("H:i:s") . " delta : " . $cron['delta'], 4);
 	if ($then->getTimestamp() < intval($cron['next'])) {
 		$then->setTimestamp(intval($cron['next']));
 	}
+	error_log($now->format("H:i:s") . " Effective time : " . $then->format("Y-m-d H:i:s"), 4);
 	$cron_expression = CronExpression::factory($cron['expression']);
 	$next_datetime = $cron_expression->getNextRunDate($then);
 	$next = $next_datetime->getTimestamp();
 	$next_format = $next_datetime->format("Y-m-d H:i:s");
+	error_log($now->format("H:i:s") . " Next time : " . $next_format, 4);
 	$database->update("crontab", ["next" => $next, "next_format" => $next_format], ["cron" => $cron['cron']]);
 	switch ($cron['cron']) {
 		case 'jingles':
@@ -57,4 +61,8 @@ if ($tracks == null || sizeof($tracks) == 0) {
 $track = $tracks[0];
 $database->query("UPDATE tracks SET date_selected = NOW() WHERE id = " . $track['id']);
 $database->insert("history", ["track_id" => $track['id']]);
+$now = new DateTime();
+$then = new DateTime();
+$then->setTimestamp($now->getTimestamp() + intval($track['duration']));
+error_log($now->format("H:i:s") . " : After this " . ((intval(intval($track['duration']) / 6)) / 10) . " minutes long track (" . $track['track_name'] . " by " . $track['artist_name'] . "), the time will be " . $then->format("H:i:s"), 4);
 die("annotate:type=\"track\",ufid=\"" . $track['ufid'] . "\":/home/yannick/radio/music/" . $track['ufid'] . ".mp3");
